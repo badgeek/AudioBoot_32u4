@@ -131,6 +131,10 @@
 // here starts the code for the stand alone microcontroller
 //***************************************************************************************
 
+#define BOOTLOADER_STARTADDRESS BOOTLOADER_ADDRESS    // start address:
+// #define LAST_PAGE (BOOTLOADER_ADDRESS - SPM_PAGESIZE) / SPM_PAGESIZE
+#define LAST_PAGE 123
+
 //***************************************************************************************
 // main loop
 //***************************************************************************************
@@ -302,7 +306,9 @@ uint8_t receiveFrame()
 void boot_program_page (uint32_t page, uint8_t *buf)
 {
   uint16_t i;
-  
+
+    if (page > LAST_PAGE) return;
+    
     cli(); // disable interrupts
 
     boot_page_erase (page);
