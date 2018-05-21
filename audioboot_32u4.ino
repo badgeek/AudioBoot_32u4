@@ -133,7 +133,7 @@
 
 #define BOOTLOADER_STARTADDRESS BOOTLOADER_ADDRESS    // start address:
 // #define LAST_PAGE (BOOTLOADER_ADDRESS - SPM_PAGESIZE) / SPM_PAGESIZE
-#define BOOTLOADER_ADDRESS 0x7000
+#define BOOTLOADER_ADDRESS 0x7C80
 
 //***************************************************************************************
 // main loop

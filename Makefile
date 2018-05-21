@@ -34,7 +34,7 @@ DEVICE = atmega32u4
 #  text    data     bss     dec     hex filename
 #      0     840       0     840     348 main.hex
 
-BOOTLOADER_ADDRESS = 0x7000
+BOOTLOADER_ADDRESS = 0x7C80
 
 LOCKOPT = -U lock:w:0x2f:m
 
