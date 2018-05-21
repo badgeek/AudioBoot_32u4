@@ -46,8 +46,8 @@ FUSEOPT_32U4 = -Pusb -e -Ulock:w:0x3F:m -Uefuse:w:0xcb:m -Uhfuse:w:0xd8:m -Ulfus
 
 FUSEOPT = $(FUSEOPT_32U4)
 
-ARDUINO_BOARD_CORE = /Users/xcorex/Library/Arduino15/packages/ATTinyCore/hardware/avr/1.0.6/cores/tiny
-ARDUINO_BOARD_PINS = /Users/xcorex/Library/Arduino15/packages/ATTinyCore/hardware/avr/1.0.6/variants/tinyX5
+ARDUINO_BOARD_CORE = $(ARDUINOAPPDIR)/Contents/Java/hardware/arduino/avr/cores/arduino/
+ARDUINO_BOARD_PINS = $(ARDUINOAPPDIR)/Contents/Java/hardware/arduino/avr/variants/micro/
 ARDUINO_BOARD_INCLUDES = -I$(ARDUINO_BOARD_CORE) -I$(ARDUINO_BOARD_PINS) -I../TinyAudioBoot
 
 # Tools:
