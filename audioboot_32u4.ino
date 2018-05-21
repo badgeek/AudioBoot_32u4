@@ -307,7 +307,7 @@ void boot_program_page (uint32_t page, uint8_t *buf)
 {
   uint16_t i;
 
-    if (page > LAST_PAGE) return;
+    // if (page > LAST_PAGE) return;
     
     cli(); // disable interrupts
 
