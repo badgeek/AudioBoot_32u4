@@ -133,7 +133,7 @@
 
 #define BOOTLOADER_STARTADDRESS BOOTLOADER_ADDRESS    // start address:
 // #define LAST_PAGE (BOOTLOADER_ADDRESS - SPM_PAGESIZE) / SPM_PAGESIZE
-#define LAST_PAGE 123
+#define BOOTLOADER_ADDRESS 0x3E40
 
 //***************************************************************************************
 // main loop
@@ -436,9 +436,12 @@ void a_main()
         { 
   #ifdef ATMEGA168_MICROCONTROLLER
         // Atmega168 Pagesize=64 Worte=128 Byte
-      uint16_t k;
-      k=(((uint16_t)FrameData[PAGEINDEXHIGH])<<8)+FrameData[PAGEINDEXLOW];
-      boot_program_page (SPM_PAGESIZE*k, FrameData+DATAPAGESTART);  // erase and programm page
+      uint16_t pageNumber = (((uint16_t)FrameData[PAGEINDEXHIGH])<<8)+FrameData[PAGEINDEXLOW];
+      uint16_t address=SPM_PAGESIZE * pageNumber;
+      
+      if( address < BOOTLOADER_ADDRESS) 
+        boot_program_page (SPM_PAGESIZE*pageNumber, FrameData+DATAPAGESTART);  // erase and programm page
+  
   #endif
 
   #ifdef ARDUINO_DEBUG 
