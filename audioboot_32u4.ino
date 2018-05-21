@@ -90,20 +90,16 @@
 
 #ifdef ARDUINO_PLATFORM
 
-  
-  // const int ledPin =  LED_BUILTIN;    // LED connected to digital pin 13
-
   // The setup() method runs once, when the sketch starts
 
   void setup()   {                
-    // initialize the digital pin as an output:
-    // pinMode(ledPin, OUTPUT);     
   #ifdef ARDUINO_DEBUG
-    Serial.begin(9600); 
-          Serial.println("AudioBoot starting");
-          delay(1000);
-  #endif
+      Serial.begin(9600); 
+      Serial.println("AudioBoot starting");
+      delay(1000);
+  #endif  
   }
+  
   void main()                     
   {
     setup();
@@ -111,19 +107,19 @@
     while(1){
       
     }
+  
   }
 
-	#define LEDPORT    ( 1<<PB0 ); //PB1 pin 6 Attiny85
+  // initialize the digital pin as an output:
+	#define LEDPORT    ( 1<<PB0 ); //PB0 RX Led
 	#define INITLED    { DDRB|=LEDPORT; }
-
 	#define LEDON      { PORTB|=LEDPORT;}
 	#define LEDOFF     { PORTB&=~LEDPORT;}
 	#define TOGGLELED  { PORTB^=LEDPORT;}
 
-
+  //data input pin (audio in)
   #define INPUTAUDIOPIN (1<<PB4)
   #define PINVALUE (PINB&INPUTAUDIOPIN)
-
   #define PINLOW (PINVALUE==0)
   #define PINHIGH (!PINLOW)
 
