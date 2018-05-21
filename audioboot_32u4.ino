@@ -1,8 +1,8 @@
 //****************************  PLATFORM SELECTION    ********************************//
 
 #define ARDUINO_PLATFORM    // ( with Atmega168 ) bootloader development on arduino plattform
-//#define ATMEGA168_MICROCONTROLLER
-#define ARDUINO_DEBUG
+#define ATMEGA168_MICROCONTROLLER
+// #define ARDUINO_DEBUG
 
 //**************************** END PLATFORM DEFINITION ********************************//
 
@@ -91,31 +91,34 @@
 #ifdef ARDUINO_PLATFORM
 
   
-  const int ledPin =  LED_BUILTIN;    // LED connected to digital pin 13
+  // const int ledPin =  LED_BUILTIN;    // LED connected to digital pin 13
 
   // The setup() method runs once, when the sketch starts
 
   void setup()   {                
     // initialize the digital pin as an output:
-          delay(1000);
-
-    pinMode(ledPin, OUTPUT);     
+    // pinMode(ledPin, OUTPUT);     
+  #ifdef ARDUINO_DEBUG
     Serial.begin(9600); 
           Serial.println("AudioBoot starting");
           delay(1000);
+  #endif
   }
-  void loop()                     
+  void main()                     
   {
-
+    setup();
     a_main();
     while(1){
       
     }
   }
-  
-  #define LEDON  { digitalWrite(ledPin, HIGH );   }
-  #define LEDOFF { digitalWrite(ledPin, LOW  );   }
-    #define TOGGLELED { digitalWrite(ledPin, !digitalRead(ledPin));} 
+
+	#define LEDPORT    ( 1<<PB0 ); //PB1 pin 6 Attiny85
+	#define INITLED    { DDRB|=LEDPORT; }
+
+	#define LEDON      { PORTB|=LEDPORT;}
+	#define LEDOFF     { PORTB&=~LEDPORT;}
+	#define TOGGLELED  { PORTB^=LEDPORT;}
 
 
   #define INPUTAUDIOPIN (1<<PB4)
@@ -147,7 +150,7 @@
 #define CRCLOW          5  // checksum lower part 
 #define CRCHIGH         6  // checksum higher part 
 #define DATAPAGESTART   7  // start of data
-#define PAGESIZE        64
+#define PAGESIZE        SPM_PAGESIZE
 #define FRAMESIZE       (PAGESIZE+DATAPAGESTART) // size of the data block to be received
 
 // bootloader commands
@@ -287,7 +290,7 @@ uint8_t receiveFrame()
   Serial.println("*********************");
 #endif
   
-  return true;
+  return 1;
 }
 
 
@@ -334,25 +337,6 @@ void initstart()
    TCCR0B= _BV(CS01);
 #endif
 }
-//***************************************************************************************
-void runProgramm(void)
-{
-  // reintialize registers to default
-  DDRB=0;
-  DDRC=0;
-  DDRD=0;
-  cli();
-
-#ifdef ATMEGA168_MICROCONTROLLER
-  TCCR0B=0; // turn off timer2
-#endif
-  // start user programm
-  asm volatile(   
-  "clr r30  \n\t"
-  "clr r31  \n\t" // z Register mit Adresse laden
-  "ijmp   \n\t" // z Register mit Adresse laden
-  );
-}
 
 //***************************************************************************************
 // main loop
@@ -390,7 +374,7 @@ void a_main()
 
            LEDOFF; // timeout,
            // leave bootloader and run program
-       runProgramm();
+       StartSketch();
          }
        }
     }
@@ -437,10 +421,9 @@ void a_main()
         break;
         case RUNCOMMAND:
         {
-    //setExternalPort(2);
   #ifndef ARDUINO_DEBUG
           // leave bootloader and run program
-    runProgramm();
+    StartSketch();
   #endif
   #ifdef ARDUINO_DEBUG        
          Serial.println("runcommand");
@@ -467,3 +450,20 @@ void a_main()
   }
 }
 
+
+void StartSketch(void)
+{
+  cli();
+
+  /* Undo TIMER1 setup and clear the count before running the sketch */
+  TCCR0B = 0;
+  TIMER = 0;
+//    
+//  /* Relocate the interrupt vector table to the application section */
+//  MCUCR = (1 << IVCE);
+//  MCUCR = 0;
+
+
+  /* jump to beginning of application space */
+  __asm__ volatile("jmp 0x0000");
+}
